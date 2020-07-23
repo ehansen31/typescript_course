@@ -6,10 +6,16 @@ function Logger(logString: string) {
 }
 
 function WithTemplate(template: string, hookId: string) {
-    return function (_: Function) {
-        const hookEl = document.getElementById(hookId);
-        if (hookEl) {
-            hookEl.innerHTML = template;
+    return function <T extends { new(...args: any[]): {} }>(originalConstructor: T) {
+        return class extends originalConstructor {
+            constructor(..._: any[]) {
+                super();
+                const hookEl = document.getElementById(hookId);
+                const p = new originalConstructor();
+                if (hookEl) {
+                    hookEl.innerHTML = template;
+                }
+            }
         }
     }
 }
